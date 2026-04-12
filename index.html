@@ -1,429 +1,580 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daaga · Ultra Space Simulation</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>RetroStore 1999</title>
+  <style>
+    /* ---------- RETRO NEON 1999 STYLE ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-<style>
-body{
-    margin:0;
-    overflow:hidden;
-    background:#000;
-}
+    body {
+      font-family: 'Press Start 2P', monospace;
+      background: #0a0a0a;
+      background-image: radial-gradient(rgba(0, 255, 204, 0.08) 1px, transparent 1px);
+      background-size: 30px 30px;
+      color: #00ffcc;
+      line-height: 1.5;
+      font-size: 12px;
+    }
 
-/* TEXT */
-.text-container{
-    position:absolute;
-    top:50%;
-    left:50%;
-    transform:translate(-50%,-50%);
-    z-index:20;
-    pointer-events:none;
-}
+    header {
+      background: linear-gradient(135deg, #ff00ff, #00ffff);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      border-bottom: 3px solid #ffff00;
+      box-shadow: 0 0 15px #ff00ff;
+    }
 
-.glitch-text{
-    font-size:clamp(3rem,12vw,7rem);
-    font-weight:900;
-    color:#fff;
-    text-shadow:0 0 40px #fff;
-}
+    header h1 {
+      font-size: 1.5rem;
+      text-shadow: 3px 3px 0 #000000;
+      color: #ffff00;
+      letter-spacing: 2px;
+    }
 
-canvas{
-    position:absolute;
-    top:0;
-    left:0;
-}
+    nav a {
+      background: #000000cc;
+      color: #00ffcc;
+      padding: 8px 14px;
+      margin: 0 5px;
+      text-decoration: none;
+      font-size: 0.7rem;
+      border: 1px solid #00ffcc;
+      transition: 0.2s;
+      cursor: pointer;
+      display: inline-block;
+    }
 
-#bgCanvas{z-index:1;}
-#fgCanvas{z-index:30;}
-</style>
+    nav a:hover {
+      background: #ff00ff;
+      color: black;
+      box-shadow: 0 0 10px #ff00ff;
+      border-color: yellow;
+    }
+
+    .container, main {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* panels */
+    .page-panel {
+      display: none;
+    }
+    .page-panel.active-page {
+      display: block;
+    }
+
+    /* hero */
+    .hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: radial-gradient(circle at 30% 10%, #111, black);
+      border-bottom: 2px dashed #00ffcc;
+    }
+    .glitch {
+      font-size: 1.8rem;
+      position: relative;
+      color: #fff;
+      text-shadow: 0.05em 0 0 #ff00ff, -0.05em -0.025em 0 #00ffff;
+      animation: glitch 2.9s infinite;
+    }
+    @keyframes glitch {
+      0% { text-shadow: 0.05em 0 0 #ff00ff, -0.05em -0.025em 0 #00ffff; }
+      50% { text-shadow: -0.05em 0.025em 0 #ff00ff, 0.05em 0 0 #00ffff; }
+      100% { text-shadow: 0.025em 0.05em 0 #ff00ff, -0.025em -0.05em 0 #00ffff; }
+    }
+    .tagline {
+      margin: 20px 0;
+      font-size: 0.8rem;
+      color: #ffcc00;
+    }
+    marquee {
+      background: #000;
+      padding: 12px;
+      margin: 20px 0;
+      border: 1px solid #ff00ff;
+      font-family: monospace;
+      font-weight: bold;
+    }
+    .cta-button, button, .add-btn, #pay-btn {
+      background: #ff00ff;
+      color: white;
+      padding: 8px 16px;
+      border: none;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 0.6rem;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: 0.1s linear;
+    }
+    .cta-button:hover, button:hover, .add-btn:hover, #pay-btn:hover {
+      background: #00ffcc;
+      color: black;
+      box-shadow: 0 0 8px cyan;
+    }
+
+    .features {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      padding: 3rem 1rem;
+      background: #0f0f0f;
+    }
+    .feature-card {
+      background: #111;
+      border: 2px solid #00ffcc;
+      padding: 1.5rem;
+      text-align: center;
+      width: 200px;
+    }
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      text-align: center;
+      margin: 2rem 0;
+      font-size: 1.4rem;
+      color: #ff00ff;
+      text-decoration: underline;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 2rem;
+      margin: 2rem 0;
+    }
+    .product-card, .product {
+      background: #111;
+      border: 2px dashed #00ffcc;
+      padding: 1rem;
+      transition: 0.2s;
+      text-align: center;
+    }
+    .product-card:hover {
+      border: 2px solid #ff00ff;
+      transform: scale(1.02);
+    }
+    .product-img {
+      width: 100%;
+      height: 130px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      margin-bottom: 1rem;
+      filter: drop-shadow(0 0 5px #00ffcc);
+    }
+    .price {
+      color: #ffcc00;
+      font-size: 1rem;
+      margin: 10px 0;
+    }
+    .desc {
+      font-size: 0.65rem;
+      margin: 8px 0;
+      font-family: monospace;
+    }
+    .cart-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+    }
+    .cart-table th, .cart-table td {
+      border: 1px solid #00ffcc;
+      padding: 12px;
+      text-align: left;
+    }
+    .remove-btn {
+      background: #ff4444;
+      padding: 4px 8px;
+      font-size: 0.6rem;
+    }
+    .cart-total {
+      text-align: right;
+      font-size: 1.2rem;
+      margin: 20px 0;
+    }
+    .checkout-form, .checkout-summary {
+      background: #111;
+      padding: 2rem;
+      border: 2px solid #ff00ff;
+      margin-top: 2rem;
+    }
+    input, select, textarea {
+      background: black;
+      border: 1px solid #00ffcc;
+      padding: 12px;
+      color: #00ffcc;
+      font-family: monospace;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+    input:focus {
+      outline: none;
+      border-color: #ff00ff;
+      box-shadow: 0 0 5px magenta;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      border-top: 2px solid #00ffcc;
+      margin-top: 3rem;
+      background: #020202;
+      font-size: 0.6rem;
+    }
+    footer a {
+      color: #ff00ff;
+      margin: 0 5px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    @media (max-width: 700px) {
+      header { flex-direction: column; gap: 15px; }
+      .glitch { font-size: 1rem; }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
-
 <body>
 
-<canvas id="bgCanvas"></canvas>
-<canvas id="fgCanvas"></canvas>
+<header>
+  <h1>RetroStore 1999</h1>
+  <nav>
+    <a data-page="home">Home</a>
+    <a data-page="products">Products</a>
+    <a data-page="cart">Cart (<span id="cart-count">0</span>)</a>
+    <a data-page="contact">Contact</a>
+  </nav>
+</header>
 
-<div class="text-container">
-    <h1 class="glitch-text">Daaga</h1>
+<!-- ================================ HOME PAGE ================================ -->
+<div id="home-page" class="page-panel">
+  <section class="hero">
+    <div class="glitch-wrapper"><h2 class="glitch" data-text="⚡ FUTURISTIC RARITY ⚡">⚡ FUTURISTIC RARITY ⚡</h2></div>
+    <p class="tagline">Only 2077 units ever made | Crypto‑ready | Neural link compatible</p>
+    <marquee>🔥 LIMITED DROPS: Holographic Interface (10 left) | Quantum Lens (5 left) 🔥</marquee>
+    <button class="cta-button" data-page="products">🕹️ EXPLORE NOW 🕹️</button>
+  </section>
+  <section class="features">
+    <div class="feature-card"><div class="feature-icon">⚡</div><h3>LightSpeed Delivery</h3><p>Drone shipped · 24h metro</p></div>
+    <div class="feature-card"><div class="feature-icon">🛡️</div><h3>5 Year Warranty</h3><p>Quantum tech included</p></div>
+    <div class="feature-card"><div class="feature-icon">💳</div><h3>COD + Crypto</h3><p>Pay with DOGE, BTC (soon)</p></div>
+  </section>
+  <section class="featured-products">
+    <h2 class="section-title">✨ Bestselling Rarities ✨</h2>
+    <div class="product-grid">
+      <div class="product-card"><div class="product-img" style="background-image:url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" fill=\"%2300ffcc\"><circle cx=\"50\" cy=\"50\" r=\"30\" fill=\"%23111\" stroke=\"%23ff00ff\"/><path d=\"M35 35 L65 65 M65 35 L35 65\" stroke=\"%2300ffcc\"/></svg>');"></div><h3>Neural Interface</h3><p class="price">₹49,999</p><button class="add-btn" data-name="Holographic Neural Interface" data-price="49999">ADD</button></div>
+      <div class="product-card"><div class="product-img" style="background-image:url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" fill=\"%2300ffcc\"><rect x=\"20\" y=\"30\" width=\"60\" height=\"40\" fill=\"%23111\" stroke=\"%23ff00ff\"/><circle cx=\"50\" cy=\"50\" r=\"10\" fill=\"%23ff00ff\"/></svg>');"></div><h3>Quantum Lens</h3><p class="price">₹29,999</p><button class="add-btn" data-name="Quantum Smart Lens" data-price="29999">ADD</button></div>
+    </div>
+  </section>
 </div>
 
+<!-- ================================ PRODUCTS PAGE ================================ -->
+<div id="products-page" class="page-panel">
+  <div class="container">
+    <h2>✨ FUTURISTIC RARE ITEMS ✨</h2>
+    <div class="product-grid">
+      <div class="product"><div class="product-img" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" fill=\"%2300ffcc\"><circle cx=\"50\" cy=\"50\" r=\"30\" fill=\"%23111\" stroke=\"%23ff00ff\"/><path d=\"M35 35 L65 65 M65 35 L35 65\" stroke=\"%2300ffcc\"/></svg>');"></div><h3>🧠 Holographic Neural Interface</h3><p class="price">₹49,999</p><p class="desc">Thought‑control + AR overlay | Limited stock</p><button class="add-btn" data-name="Holographic Neural Interface" data-price="49999">➕ ADD</button></div>
+      <div class="product"><div class="product-img" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" fill=\"%2300ffcc\"><rect x=\"20\" y=\"30\" width=\"60\" height=\"40\" fill=\"%23111\" stroke=\"%23ff00ff\"/><circle cx=\"50\" cy=\"50\" r=\"10\" fill=\"%23ff00ff\"/></svg>');"></div><h3>👁️ Quantum Smart Lens</h3><p class="price">₹29,999</p><p class="desc">Zoom, record, translate in real time</p><button class="add-btn" data-name="Quantum Smart Lens" data-price="29999">➕ ADD</button></div>
+      <div class="product"><div class="product-img" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" fill=\"%2300ffcc\"><path d=\"M30 50 L70 50 M50 30 L50 70\" stroke=\"%23ff00ff\"/><circle cx=\"50\" cy=\"50\" r=\"20\" fill=\"%23111\"/></svg>');"></div><h3>🚁 Anti‑Gravity Drone</h3><p class="price">₹89,999</p><p class="desc">Zero‑propeller, 4K 120fps, AI follow</p><button class="add-btn" data-name="Anti-Gravity Drone" data-price="89999">➕ ADD</button></div>
+      <div class="product"><div class="product-img" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" fill=\"%2300ffcc\"><circle cx=\"50\" cy=\"50\" r=\"25\" fill=\"%23111\" stroke=\"%23ff00ff\"/><rect x=\"45\" y=\"30\" width=\"10\" height=\"40\" fill=\"%2300ffcc\"/></svg>');"></div><h3>⏱️ Plasma Core Watch</h3><p class="price">₹19,999</p><p class="desc">Indefinite battery, health scan</p><button class="add-btn" data-name="Plasma Core Watch" data-price="19999">➕ ADD</button></div>
+      <div class="product"><div class="product-img" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" fill=\"%2300ffcc\"><rect x=\"25\" y=\"35\" width=\"50\" height=\"30\" fill=\"%23111\" stroke=\"%23ff00ff\"/><circle cx=\"40\" cy=\"50\" r=\"4\" fill=\"%23ff00ff\"/><circle cx=\"60\" cy=\"50\" r=\"4\" fill=\"%23ff00ff\"/></svg>');"></div><h3>🦾 Nano‑Repair Bot Kit</h3><p class="price">₹14,999</p><p class="desc">Self‑healing devices, scratch removal</p><button class="add-btn" data-name="Nano-Repair Bot Kit" data-price="14999">➕ ADD</button></div>
+      <div class="product"><div class="product-img" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\" fill=\"%2300ffcc\"><path d=\"M25 45 L75 45 L70 70 L30 70 Z\" fill=\"%23111\" stroke=\"%23ff00ff\"/><rect x=\"45\" y=\"70\" width=\"10\" height=\"15\" fill=\"%23ff00ff\"/></svg>');"></div><h3>⚡ Cyberpunk Exo‑Gloves</h3><p class="price">₹34,999</p><p class="desc">Haptic feedback, finger‑laser</p><button class="add-btn" data-name="Cyberpunk Exo-Gloves" data-price="34999">➕ ADD</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ================================ CART PAGE ================================ -->
+<div id="cart-page" class="page-panel">
+  <div class="container">
+    <h2>🛒 Your Cart</h2>
+    <div id="cart-container"></div>
+    <div class="cart-total">Total: ₹<span id="cart-total-value">0</span></div>
+    <button id="checkout-nav-btn">💳 PROCEED TO CHECKOUT</button>
+  </div>
+</div>
+
+<!-- ================================ CHECKOUT PAGE ================================ -->
+<div id="checkout-page" class="page-panel">
+  <div class="container">
+    <h2>📦 Shipping Details</h2>
+    <div id="order-summary" class="checkout-summary" style="margin-bottom:2rem;"></div>
+    <form id="checkout-form">
+      <input type="text" id="fullname" placeholder="Full Name" required>
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="text" id="address" placeholder="Street Address" required>
+      <input type="text" id="city" placeholder="City" required>
+      <input type="text" id="zip" placeholder="Postal Code" required>
+      <button type="submit">💳 Proceed to Payment</button>
+    </form>
+  </div>
+</div>
+
+<!-- ================================ PAYMENT PAGE ================================ -->
+<div id="payment-page" class="page-panel">
+  <div class="container">
+    <h2>💸 SELECT PAYMENT METHOD</h2>
+    <div id="payment-order-summary" class="checkout-summary" style="border:1px solid #ff00ff; margin-bottom:2rem;"></div>
+    <form id="payment-form">
+      <label style="display:block; margin:15px 0;"><input type="radio" name="payment_method" value="cod" checked> 💵 Cash on Delivery (COD)</label>
+      <label style="display:block; margin:15px 0;"><input type="radio" name="payment_method" value="card"> 💳 Credit / Debit Card</label>
+      <label style="display:block; margin:15px 0;"><input type="radio" name="payment_method" value="upi"> 📱 UPI (Google Pay, PhonePe)</label>
+      <label style="display:block; margin:15px 0;"><input type="radio" name="payment_method" value="netbanking"> 🏦 NetBanking</label>
+      <button type="submit" id="pay-btn">✅ CONFIRM PAYMENT</button>
+    </form>
+  </div>
+</div>
+
+<!-- ================================ ABOUT PAGE ================================ -->
+<div id="about-page" class="page-panel">
+  <div class="container">
+    <h2>📀 About Us</h2>
+    <p><strong>Founded in 1999</strong> — RetroStore began as a tiny computer kiosk in Mumbai, India. Today we are a leading online destination for vintage-inspired gaming gear and high-performance peripherals. We blend old-school aesthetics with modern reliability.</p>
+    <p>✔️ 25000+ happy customers ✔️ 4.9/5 rating ✔️ 5 year warranty ✔️ India-wide delivery</p>
+    <p><strong>Our mission:</strong> Bringing back the 90s vibe with 2077 tech. Every product is tested for quality and packed with nostalgia.</p>
+  </div>
+</div>
+
+<!-- ================================ CONTACT PAGE ================================ -->
+<div id="contact-page" class="page-panel">
+  <div class="container">
+    <h2>📞 Get In Touch</h2>
+    <p><strong>📍 Address:</strong> 42, Retro Arcade, Andheri East, Mumbai - 400069, India</p>
+    <p><strong>📧 Email:</strong> support@retrostore.com | sales@retrostore.com</p>
+    <p><strong>📞 Phone:</strong> +91 90000 00000 (Mon-Sat, 10AM-7PM IST)</p>
+    <hr style="border-color:#00ffcc; margin:20px 0;">
+    <form id="contactForm" style="background:#111;padding:1rem;"><input type="text" placeholder="Your Name"><input type="email" placeholder="Email"><textarea rows="3" placeholder="Message"></textarea><button type="button" onclick="alert('📡 Retro response: our team will reach out within 24h!')">Send Message</button></form>
+  </div>
+</div>
+
+<!-- ================================ PRIVACY PAGE ================================ -->
+<div id="privacy-page" class="page-panel">
+  <div class="container">
+    <h2>🔐 Privacy Policy</h2>
+    <p>RetroStore respects your privacy. We collect only order-related data (name, address, email) to process shipments. No data is sold to third parties. Secure SSL encryption. You may request data deletion at privacy@retrostore.com.</p>
+    <p>Cookies: functional cart only.</p>
+  </div>
+</div>
+
+<!-- ================================ TERMS PAGE ================================ -->
+<div id="terms-page" class="page-panel">
+  <div class="container">
+    <h2>📜 Terms of Service</h2>
+    <p>All products are covered by manufacturer warranty. Returns accepted within 14 days of delivery (unused condition). Shipping charges may apply. RetroStore reserves the right to update prices without notice. By placing an order you agree to our policies.</p>
+    <p>For support: support@retrostore.com | +91 9000000000</p>
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 RetroStore | support@retrostore.com | +91 9000000000</p>
+  <a data-page="about">About</a> |
+  <a data-page="privacy">Privacy</a> |
+  <a data-page="terms">Terms</a> |
+  <a data-page="contact">Contact</a>
+</footer>
+
 <script>
+  // ------------------------------ CART LOGIC ------------------------------
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-// ================= SETUP =================
-const bgCanvas = document.getElementById('bgCanvas');
-const bgCtx = bgCanvas.getContext('2d');
+  function saveCart() {
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+  }
 
-const fgCanvas = document.getElementById('fgCanvas');
-const fgCtx = fgCanvas.getContext('2d');
+  function updateCartCount() {
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const spans = document.querySelectorAll("#cart-count");
+    spans.forEach(span => { if(span) span.innerText = totalItems; });
+  }
 
-function resize(){
-    bgCanvas.width = innerWidth;
-    bgCanvas.height = innerHeight;
-    fgCanvas.width = innerWidth;
-    fgCanvas.height = innerHeight;
-}
-window.addEventListener('resize', resize);
+  window.addToCart = function(name, price, quantity = 1) {
+    const existing = cart.find(item => item.name === name && item.price === price);
+    if (existing) existing.quantity += quantity;
+    else cart.push({ name, price, quantity });
+    saveCart();
+    alert(`🕹️ ${name} added to cart!`);
+  };
 
-// ================= CENTER =================
-function getCenter(){
-    let r = document.querySelector(".glitch-text").getBoundingClientRect();
-    return { x:r.left + r.width/2, y:r.top + r.height/2 };
-}
+  function removeFromCart(index) {
+    cart.splice(index, 1);
+    saveCart();
+    if (document.getElementById("cart-page").classList.contains("active-page")) renderCart();
+  }
 
-// ================= PARTICLES =================
-let particles = [];
-
-class Particle{
-    constructor(){ this.reset(); }
-
-    reset(){
-        let side = Math.floor(Math.random()*4);
-
-        if(side===0){ this.x=Math.random()*fgCanvas.width; this.y=-20; }
-        else if(side===1){ this.x=Math.random()*fgCanvas.width; this.y=fgCanvas.height+20; }
-        else if(side===2){ this.x=-20; this.y=Math.random()*fgCanvas.height; }
-        else{ this.x=fgCanvas.width+20; this.y=Math.random()*fgCanvas.height; }
-
-        this.vx=(Math.random()-0.5)*2;
-        this.vy=(Math.random()-0.5)*2;
-        this.size=Math.random()*2+1;
-
-        this.prevX=this.x;
-        this.prevY=this.y;
+  function updateQuantity(index, newQty) {
+    if (newQty <= 0) removeFromCart(index);
+    else {
+      cart[index].quantity = newQty;
+      saveCart();
+      if (document.getElementById("cart-page").classList.contains("active-page")) renderCart();
     }
+  }
 
-    update(){
+  function getCartTotal() {
+    return cart.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+  }
 
-        this.prevX=this.x;
-        this.prevY=this.y;
+  function clearCart() {
+    cart = [];
+    saveCart();
+  }
 
-        let c = getCenter();
-
-        let dx = c.x - this.x;
-        let dy = c.y - this.y;
-        let dist = Math.hypot(dx,dy);
-
-        let angle = Math.atan2(dy,dx);
-
-        // MAIN BLACK HOLE
-        let gravity = 1200 / (dist*dist + 80);
-        this.vx += Math.cos(angle)*gravity;
-        this.vy += Math.sin(angle)*gravity;
-
-        let swirl = 0.8 / (dist*0.02 + 1);
-        this.vx += Math.cos(angle + Math.PI/2)*swirl;
-        this.vy += Math.sin(angle + Math.PI/2)*swirl;
-
-        // PLANETS
-        planets.forEach(p=>{
-            let dx=p.x-this.x;
-            let dy=p.y-this.y;
-            let d=Math.hypot(dx,dy);
-
-            if(d < 120){
-                let a=Math.atan2(dy,dx);
-                this.vx += Math.cos(a)*0.2;
-                this.vy += Math.sin(a)*0.2;
-            }
-        });
-
-        // MULTIPLE BLACK HOLES
-        blackHoles.forEach(bh=>{
-            let dx = bh.x - this.x;
-            let dy = bh.y - this.y;
-            let dist = Math.hypot(dx,dy);
-
-            let a = Math.atan2(dy,dx);
-
-            let force = bh.mass / (dist*dist + 50);
-
-            this.vx += Math.cos(a)*force;
-            this.vy += Math.sin(a)*force;
-
-            // swirl
-            this.vx += Math.cos(a + Math.PI/2)*0.5;
-            this.vy += Math.sin(a + Math.PI/2)*0.5;
-
-            // eat particle
-            if(dist < bh.size){
-                createExplosion(this.x,this.y);
-                this.reset();
-            }
-        });
-
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if(dist < 6) this.reset();
-
-        if(this.x < -50 || this.x > fgCanvas.width+50 ||
-           this.y < -50 || this.y > fgCanvas.height+50){
-            this.reset();
-        }
+  function renderCart() {
+    const container = document.getElementById("cart-container");
+    if (!container) return;
+    if (cart.length === 0) {
+      container.innerHTML = "<p class='empty-cart'>🕹️ Cart empty. <a data-page='products' style='cursor:pointer;color:#ff00ff;'>Shop futuristic gear</a></p>";
+      document.getElementById("cart-total-value").innerText = "0";
+      return;
     }
-
-    draw(){
-        fgCtx.strokeStyle="rgba(255,180,80,0.4)";
-        fgCtx.lineWidth=this.size;
-        fgCtx.beginPath();
-        fgCtx.moveTo(this.prevX,this.prevY);
-        fgCtx.lineTo(this.x,this.y);
-        fgCtx.stroke();
-
-        fgCtx.fillStyle="#ffaa33";
-        fgCtx.beginPath();
-        fgCtx.arc(this.x,this.y,this.size,0,Math.PI*2);
-        fgCtx.fill();
-    }
-}
-
-function initParticles(){
-    particles=[];
-    for(let i=0;i<700;i++) particles.push(new Particle());
-}
-
-// ================= PLANETS =================
-let planets=[];
-
-class Planet{
-    constructor(r,dist,speed,color){
-        this.r=r;
-        this.dist=dist;
-        this.angle=Math.random()*Math.PI*2;
-        this.speed=speed;
-        this.color=color;
-    }
-
-    update(cx,cy){
-        this.angle+=this.speed;
-        this.x=cx + Math.cos(this.angle)*this.dist;
-        this.y=cy + Math.sin(this.angle)*this.dist;
-    }
-
-    draw(){
-        let g=bgCtx.createRadialGradient(this.x,this.y,1,this.x,this.y,this.r);
-        g.addColorStop(0,"#fff");
-        g.addColorStop(1,this.color);
-
-        bgCtx.fillStyle=g;
-        bgCtx.beginPath();
-        bgCtx.arc(this.x,this.y,this.r,0,Math.PI*2);
-        bgCtx.fill();
-    }
-}
-
-function initPlanets(){
-    planets=[
-        new Planet(10,200,0.01,"#ff5500"),
-        new Planet(12,280,-0.008,"#00aaff"),
-        new Planet(8,150,0.015,"#ffaa00"),
-        new Planet(9,240,0.012,"#55ff88")
-    ];
-}
-
-// ================= MULTIPLE BLACK HOLES =================
-let blackHoles=[];
-
-class BlackHole{
-    constructor(){
-        this.orbit = Math.random()>0.5;
-
-        this.angle=Math.random()*Math.PI*2;
-        this.dist=100+Math.random()*300;
-
-        this.x=Math.random()*bgCanvas.width;
-        this.y=Math.random()*bgCanvas.height;
-
-        this.speed=(Math.random()*0.01+0.003)*(Math.random()>0.5?1:-1);
-        this.size=8+Math.random()*10;
-        this.mass=2000+Math.random()*3000;
-    }
-
-    update(cx,cy){
-        if(this.orbit){
-            this.angle+=this.speed;
-            this.x=cx + Math.cos(this.angle)*this.dist;
-            this.y=cy + Math.sin(this.angle)*this.dist;
-        }else{
-            this.x += Math.sin(Date.now()*0.001 + this.angle)*1.5;
-            this.y += Math.cos(Date.now()*0.001 + this.angle)*1.5;
-        }
-    }
-
-    draw(){
-        let g=bgCtx.createRadialGradient(this.x,this.y,1,this.x,this.y,this.size*6);
-        g.addColorStop(0,"#000");
-        g.addColorStop(0.4,"rgba(255,100,0,0.5)");
-        g.addColorStop(0.7,"rgba(0,150,255,0.3)");
-        g.addColorStop(1,"transparent");
-
-        bgCtx.fillStyle=g;
-        bgCtx.beginPath();
-        bgCtx.arc(this.x,this.y,this.size*6,0,Math.PI*2);
-        bgCtx.fill();
-
-        bgCtx.fillStyle="#000";
-        bgCtx.beginPath();
-        bgCtx.arc(this.x,this.y,this.size,0,Math.PI*2);
-        bgCtx.fill();
-    }
-}
-
-function initBlackHoles(){
-    blackHoles=[];
-    for(let i=0;i<6;i++) blackHoles.push(new BlackHole());
-}
-
-// ================= NUCLEI =================
-let nuclei=[];
-
-class Nucleus{
-    constructor(){
-        this.x=Math.random()*bgCanvas.width;
-        this.y=Math.random()*bgCanvas.height;
-
-        this.vx=(Math.random()-0.5)*8;
-        this.vy=(Math.random()-0.5)*8;
-
-        this.size=2+Math.random()*3;
-    }
-
-    update(){
-        this.vx += (Math.random()-0.5)*0.5;
-        this.vy += (Math.random()-0.5)*0.5;
-
-        this.x += this.vx;
-        this.y += this.vy;
-
-        if(this.x<0||this.x>bgCanvas.width) this.vx*=-1;
-        if(this.y<0||this.y>bgCanvas.height) this.vy*=-1;
-
-        particles.forEach(p=>{
-            let dx=p.x-this.x;
-            let dy=p.y-this.y;
-            let d=Math.hypot(dx,dy);
-
-            if(d<80){
-                let a=Math.atan2(dy,dx);
-                p.vx += Math.cos(a)*0.8;
-                p.vy += Math.sin(a)*0.8;
-            }
-        });
-    }
-
-    draw(){
-        bgCtx.fillStyle="rgba(255,255,255,0.9)";
-        bgCtx.beginPath();
-        bgCtx.arc(this.x,this.y,this.size,0,Math.PI*2);
-        bgCtx.fill();
-    }
-}
-
-function initNuclei(){
-    nuclei=[];
-    for(let i=0;i<20;i++) nuclei.push(new Nucleus());
-}
-
-// ================= EXPLOSIONS =================
-let explosions=[];
-
-function createExplosion(x,y){
-    for(let i=0;i<40;i++){
-        explosions.push({
-            x,y,
-            vx:(Math.random()-0.5)*6,
-            vy:(Math.random()-0.5)*6,
-            life:60
-        });
-    }
-}
-
-function updateExplosions(){
-    explosions.forEach(e=>{
-        e.x+=e.vx;
-        e.y+=e.vy;
-        e.life--;
+    let html = `<table class="cart-table"><tr><th>Item</th><th>Price</th><th>Qty</th><th>Subtotal</th><th></th></tr>`;
+    cart.forEach((item, idx) => {
+      const subtotal = item.price * item.quantity;
+      html += `<tr>
+        <td>${item.name}</td>
+        <td>₹${item.price}</td>
+        <td><input type="number" min="1" value="${item.quantity}" class="qty-input" data-index="${idx}" style="width:70px;"></td>
+        <td>₹${subtotal}</td>
+        <td><button class="remove-btn" data-index="${idx}">🗑️ Remove</button></td>
+      </tr>`;
     });
-
-    explosions = explosions.filter(e=>e.life>0);
-}
-
-function drawExplosions(){
-    explosions.forEach(e=>{
-        bgCtx.fillStyle=`rgba(255,150,50,${e.life/60})`;
-        bgCtx.fillRect(e.x,e.y,2,2);
+    html += `</table>`;
+    container.innerHTML = html;
+    document.getElementById("cart-total-value").innerText = getCartTotal();
+    
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        removeFromCart(parseInt(btn.dataset.index));
+        renderCart();
+      });
     });
-}
-
-// ================= BLACK HOLE VISUAL =================
-function drawBlackHole(){
-    let c=getCenter();
-
-    let g=bgCtx.createRadialGradient(c.x,c.y,10,c.x,c.y,180);
-    g.addColorStop(0,"#000");
-    g.addColorStop(0.5,"#000");
-    g.addColorStop(0.8,"rgba(255,120,0,0.25)");
-    g.addColorStop(1,"rgba(0,150,255,0.2)");
-
-    bgCtx.fillStyle=g;
-    bgCtx.beginPath();
-    bgCtx.arc(c.x,c.y,180,0,Math.PI*2);
-    bgCtx.fill();
-}
-
-// ================= ANIMATION =================
-function animate(){
-
-    bgCtx.fillStyle="rgba(0,0,0,0.25)";
-    bgCtx.fillRect(0,0,bgCanvas.width,bgCanvas.height);
-
-    let c=getCenter();
-
-    planets.forEach(p=>{
-        p.update(c.x,c.y);
-        p.draw();
+    document.querySelectorAll('.qty-input').forEach(inp => {
+      inp.addEventListener('change', (e) => {
+        updateQuantity(parseInt(inp.dataset.index), parseInt(inp.value));
+        renderCart();
+      });
     });
+  }
 
-    blackHoles.forEach(bh=>{
-        bh.update(c.x,c.y);
-        bh.draw();
-    });
-
-    nuclei.forEach(n=>{
-        n.update();
-        n.draw();
-    });
-
-    drawBlackHole();
-
-    updateExplosions();
-    drawExplosions();
-
-    fgCtx.clearRect(0,0,fgCanvas.width,fgCanvas.height);
-
-    particles.forEach(p=>{
-        p.update();
-        p.draw();
-    });
-
-    if(Math.random()<0.01){
-        createExplosion(Math.random()*bgCanvas.width,Math.random()*bgCanvas.height);
+  // ------------------------------ CHECKOUT LOGIC ------------------------------
+  function displayOrderSummary() {
+    const summaryDiv = document.getElementById("order-summary");
+    if (!summaryDiv) return;
+    if (cart.length === 0) {
+      summaryDiv.innerHTML = "<p>⚠️ Cart empty. <a data-page='products' style='cursor:pointer;color:#ff00ff;'>Add items</a></p>";
+      return;
     }
+    let itemsHtml = "<ul>";
+    cart.forEach(item => { itemsHtml += `<li>${item.name} x ${item.quantity} = ₹${item.price * item.quantity}</li>`; });
+    itemsHtml += `</ul><strong>Total: ₹${getCartTotal()}</strong>`;
+    summaryDiv.innerHTML = itemsHtml;
+  }
 
-    requestAnimationFrame(animate);
-}
+  function setupCheckout() {
+    const form = document.getElementById("checkout-form");
+    if (!form) return;
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (cart.length === 0) { alert("Cart empty."); return; }
+      const fullname = document.getElementById("fullname").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const city = document.getElementById("city").value.trim();
+      const zip = document.getElementById("zip").value.trim();
+      if (!fullname || !email || !address || !city || !zip) { alert("Fill all fields."); return; }
+      if (!email.includes("@")) { alert("Valid email required."); return; }
+      const orderData = { cart: cart, total: getCartTotal(), customer: { fullname, email, address, city, zip }, timestamp: Date.now() };
+      localStorage.setItem("pendingOrder", JSON.stringify(orderData));
+      showPage("payment");
+    });
+  }
 
-// ================= START =================
-resize();
-initParticles();
-initPlanets();
-initBlackHoles();
-initNuclei();
-animate();
+  function setupPayment() {
+    const pendingRaw = localStorage.getItem("pendingOrder");
+    const summaryDiv = document.getElementById("payment-order-summary");
+    if (!summaryDiv) return;
+    if (!pendingRaw) {
+      summaryDiv.innerHTML = "<p>❌ No order found. <a data-page='cart' style='cursor:pointer;color:#ff00ff;'>Go to cart</a></p>";
+      return;
+    }
+    const order = JSON.parse(pendingRaw);
+    let summaryHtml = `<h3>Order Summary</h3><ul>`;
+    order.cart.forEach(item => { summaryHtml += `<li>${item.name} x ${item.quantity} = ₹${item.price * item.quantity}</li>`; });
+    summaryHtml += `</ul><p><strong>Total: ₹${order.total}</strong></p><p>Shipping to: ${order.customer.fullname}, ${order.customer.address}, ${order.customer.city} - ${order.customer.zip}</p>`;
+    summaryDiv.innerHTML = summaryHtml;
 
+    const form = document.getElementById("payment-form");
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const method = document.querySelector('input[name="payment_method"]:checked').value;
+      if (method === "cod") {
+        alert(`✅ ORDER CONFIRMED (COD)\nThank you ${order.customer.fullname}! Your futuristic items will arrive within 3-5 business days.`);
+        clearCart();
+        localStorage.removeItem("pendingOrder");
+        showPage("home");
+      } else {
+        alert(`🚧 Payment gateway integration coming soon!\nYou selected ${method.toUpperCase()}. Your cart is preserved.`);
+        // keep order pending, user can go back to cart or choose COD later
+      }
+    };
+  }
+
+  // ------------------------------ PAGE NAVIGATION ------------------------------
+  function showPage(pageId) {
+    document.querySelectorAll('.page-panel').forEach(panel => panel.classList.remove('active-page'));
+    const activePanel = document.getElementById(`${pageId}-page`);
+    if (activePanel) activePanel.classList.add('active-page');
+    // update cart display if needed
+    if (pageId === 'cart') renderCart();
+    if (pageId === 'checkout') displayOrderSummary();
+    if (pageId === 'payment') setupPayment();
+    window.scrollTo(0,0);
+  }
+
+  // attach navigation to all data-page links and buttons
+  function bindNavigation() {
+    document.querySelectorAll('[data-page]').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.preventDefault();
+        const page = el.getAttribute('data-page');
+        if (page) showPage(page);
+      });
+    });
+    document.getElementById("checkout-nav-btn")?.addEventListener("click", () => {
+      if (cart.length === 0) alert("Cart is empty");
+      else showPage("checkout");
+    });
+  }
+
+  // initial load
+  document.addEventListener("DOMContentLoaded", () => {
+    bindNavigation();
+    updateCartCount();
+    showPage("home");
+    setupCheckout();
+    // re-render cart if needed after add
+    window.renderCartGlobal = renderCart;
+    // attach add-to-cart listeners for dynamic buttons
+    document.body.addEventListener('click', (e) => {
+      if (e.target.classList && e.target.classList.contains('add-btn')) {
+        const name = e.target.getAttribute('data-name');
+        const price = parseInt(e.target.getAttribute('data-price'));
+        if (name && price) addToCart(name, price);
+      }
+    });
+  });
 </script>
-
 </body>
 </html>
